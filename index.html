@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallpapers</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            overflow-x: hidden;
+            background-color: #fafafa;
+        }
+
+        header {
+            width: 100%;
+            padding: 1rem;
+            background-color: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(6px);
+            box-shadow: 0 1px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        header h1 {
+            text-align: center;
+            color: rgb(2, 2, 36);
+        }
+
+        main {
+            padding: 2rem;
+        }
+
+        /* Fixed structural grid wrapper */
+        .masonry {
+            column-count: 4;
+            column-gap: 1rem;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Kept clean for masonry rendering layout stability */
+        .masonry-item {
+            break-inside: avoid;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            border-radius: 10px;
+            position: relative; /* Setup positioning for desktop button alignment */
+            background-color: #ffffff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .masonry img {
+            width: 100%;
+            display: block;
+            border-radius: 10px;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        /* Balanced, clean zoom that honors your border radius masks */
+        .masonry-item:hover img {
+            transform: scale(1.03);
+            box-shadow: 2px 4px 5px 2px rgb(100, 100, 100);
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 912px) {
+            .masonry {
+                column-count: 3;
+            }
+        }
+
+        @media (max-width: 576px) {
+            main {
+                padding: 1.2rem;
+            }
+            .masonry {
+                column-count: 2;
+                column-gap: 10px;
+            }
+        } 
+    </style>
+</head>
+<body>
+    
+    <header>
+        <h1>Wallpapers</h1>
+    </header>
+    
+    <!-- JavaScript will dynamically drop automated images inside this element -->
+    <main class="masonry" id="wallpaper-grid"></main>
+
+    <script>
+        async function loadWallpapers() {
+            const grid = document.getElementById('wallpaper-grid');
+            
+            try {
+                // Fetch the list automatically written by GitHub Action configuration
+                const response = await fetch('./wallpapers.json');
+                const wallpapers = await response.json();
+                
+                if (!wallpapers || wallpapers.length === 0) {
+                    grid.innerHTML = "<p style='grid-column: 1/-1; text-align:center; color:#a1a1aa; padding: 40px;'>No wallpapers found inside your directory yet.</p>";
+                    return;
+                }
+
+                wallpapers.forEach(filePath => {
+                    // Strips the directory folder paths to read a clean title tag name
+                    const fileNameClean = filePath.split('/').pop();
+                    
+                    const item = document.createElement('div');
+                    item.className = 'masonry-item';
+                    
+                    // Builds layout items smoothly into the DOM tree
+                    item.innerHTML = `
+                        <img src="./${filePath}" alt="${fileNameClean}" loading="lazy">
+                    `;
+                    grid.appendChild(item);
+                });
+            } catch (error) {
+                console.error("Error parsing the automated wallpaper list:", error);
+                grid.innerHTML = "<p style='grid-column: 1/-1; text-align:center; color:#f87171; padding: 40px;'>Waiting for the automation file. Try adding an image folder to trigger it!</p>";
+            }
+        }
+
+        loadWallpapers();
+    </script>
+</body>
+</html>
