@@ -1,0 +1,36 @@
+name: Generate Wallpaper List
+
+on:
+  push:
+    paths:
+      - 'images/**' # Only runs when you add/change things inside the images folder
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Allows GitHub to save the generated file back to your repo
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Run Scan Script
+      run: |
+        echo "[" > wallpapers.json
+        # Finds all images in subfolders and cleans up paths
+        find images/ -type f \( -name "*.jpg" -o -name "*.png" -o -name "*.jpeg" -o -name "*.webp" \) | sort | while read -r line; do
+          echo "  \"$line\"," >> wallpapers.json
+        done
+        # Fixes trailing comma formatting to make valid JSON
+        if [ -s wallpapers.json ]; then
+          sed -i '$ s/,$//' wallpapers.json
+        fi
+        echo "]" >> wallpapers.json
+
+    - name: Commit and Push Changes
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@://github.com"
+        git add wallpapers.json
+        git diff-index --quiet HEAD || git commit -m "Automated wallpaper list update [skip ci]" && git push
