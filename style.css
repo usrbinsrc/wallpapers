@@ -70,7 +70,7 @@ main {
     border: none;
     background: transparent;
     max-width: 80vw;
-    max-height: 85vh;
+    max-height: auto;
     margin: auto;
     overflow: visible;
     outline: none;
