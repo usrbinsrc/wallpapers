@@ -4,86 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wallpapers</title>
-    <style>
-        * {
-            padding: 0;
-            margin: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            overflow-x: hidden;
-            background-color: #fafafa;
-        }
-
-        header {
-            width: 100%;
-            padding: 1rem;
-            background-color: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(6px);
-            box-shadow: 0 1px 8px rgba(0, 0, 0, 0.08);
-        }
-
-        header h1 {
-            text-align: center;
-            color: rgb(2, 2, 36);
-        }
-
-        main {
-            padding: 2rem;
-        }
-
-        /* Fixed structural grid wrapper */
-        .masonry {
-            column-count: 4;
-            column-gap: 1rem;
-            width: 100%;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        /* Kept clean for masonry rendering layout stability */
-        .masonry-item {
-            break-inside: avoid;
-            margin-bottom: 1rem;
-            overflow: hidden;
-            border-radius: 10px;
-            position: relative; /* Setup positioning for desktop button alignment */
-            background-color: #ffffff;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-        }
-
-        .masonry img {
-            width: 100%;
-            display: block;
-            border-radius: 10px;
-            transition: transform 0.3s ease-in-out;
-        }
-
-        /* Balanced, clean zoom that honors your border radius masks */
-        .masonry-item:hover img {
-            transform: scale(1.03);
-            box-shadow: 2px 4px 5px 2px rgb(100, 100, 100);
-        }
-
-        /* Responsive Breakpoints */
-        @media (max-width: 912px) {
-            .masonry {
-                column-count: 3;
-            }
-        }
-
-        @media (max-width: 576px) {
-            main {
-                padding: 1.2rem;
-            }
-            .masonry {
-                column-count: 2;
-                column-gap: 10px;
-            }
-        } 
-    </style>
+    <!-- LINK TO YOUR EXTERNAL CSS STYLE SHEET -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     
@@ -94,12 +16,47 @@
     <!-- JavaScript will dynamically drop automated images inside this element -->
     <main class="masonry" id="wallpaper-grid"></main>
 
+    <!-- Modern Declarative Lightbox Element -->
+    <dialog id="wallpaper-modal" class="wallpaper-dialog">
+        <button class="close-dialog-btn" id="close-modal-btn" aria-label="Close popup">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+        <div class="dialog-container">
+            <div class="dialog-image-wrapper">
+                <img id="modal-img" src="" alt="Wallpaper Preview">
+            </div>
+            <div class="dialog-footer">
+                <div id="modal-filename" class="dialog-filename">Wallpaper Name</div>
+                <div class="dialog-actions">
+                    <!-- Download Link Target -->
+                    <a id="modal-download" href="" download class="action-btn">
+                        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        Download
+                    </a>
+                    <!-- Share Custom Wrapper Trigger -->
+                    <button id="modal-share" class="action-btn">
+                        <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+                        Share
+                    </button>
+                </div>
+            </div>
+        </div>
+    </dialog>
+
     <script>
+        const modal = document.getElementById('wallpaper-modal');
+        const modalImg = document.getElementById('modal-img');
+        const modalFilename = document.getElementById('modal-filename');
+        const modalDownload = document.getElementById('modal-download');
+        const modalShare = document.getElementById('modal-share');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+
+        let currentShareData = { title: '', url: '' };
+
         async function loadWallpapers() {
             const grid = document.getElementById('wallpaper-grid');
             
             try {
-                // Fetch the list automatically written by GitHub Action configuration
                 const response = await fetch('./wallpapers.json');
                 const wallpapers = await response.json();
                 
@@ -109,16 +66,34 @@
                 }
 
                 wallpapers.forEach(filePath => {
-                    // Strips the directory folder paths to read a clean title tag name
                     const fileNameClean = filePath.split('/').pop();
                     
                     const item = document.createElement('div');
                     item.className = 'masonry-item';
                     
-                    // Builds layout items smoothly into the DOM tree
                     item.innerHTML = `
                         <img src="./${filePath}" alt="${fileNameClean}" loading="lazy">
                     `;
+
+                    // Click event to hook lightbox values dynamically
+                    item.addEventListener('click', () => {
+                        const absoluteUrl = new URL(`./${filePath}`, window.location.href).href;
+                        
+                        modalImg.src = `./${filePath}`;
+                        modalImg.alt = fileNameClean;
+                        modalFilename.textContent = fileNameClean;
+                        
+                        modalDownload.href = `./${filePath}`;
+                        modalDownload.setAttribute('download', fileNameClean);
+                        
+                        currentShareData = {
+                            title: `Wallpaper: ${fileNameClean}`,
+                            url: absoluteUrl
+                        };
+
+                        modal.showModal();
+                    });
+
                     grid.appendChild(item);
                 });
             } catch (error) {
@@ -126,6 +101,37 @@
                 grid.innerHTML = "<p style='grid-column: 1/-1; text-align:center; color:#f87171; padding: 40px;'>Waiting for the automation file. Try adding an image folder to trigger it!</p>";
             }
         }
+
+        closeModalBtn.addEventListener('click', () => modal.close());
+        
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.close();
+            }
+        });
+
+        modalShare.addEventListener('click', async () => {
+            if (navigator.share) {
+                try {
+                    await navigator.share(currentShareData);
+                } catch (err) {
+                    if (err.name !== 'AbortError') {
+                        console.error('Error sharing:', err);
+                    }
+                }
+            } else {
+                try {
+                    await navigator.clipboard.writeText(currentShareData.url);
+                    const originalText = modalShare.innerHTML;
+                    modalShare.textContent = 'Copied Link!';
+                    setTimeout(() => {
+                        modalShare.innerHTML = originalText;
+                    }, 2000);
+                } catch (copyErr) {
+                    alert('Could not copy link automatically.');
+                }
+            }
+        });
 
         loadWallpapers();
     </script>
