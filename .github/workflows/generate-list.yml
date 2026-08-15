@@ -15,22 +15,27 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v4
 
-    # Install compression tools that keep original extensions
+    # Install compression tools for all three formats (JPG, PNG, WebP)
     - name: Install Optimization Tools
       run: |
         sudo apt-get update
-        sudo apt-get install -y jpegoptim pngquant
+        sudo apt-get install -y jpegoptim pngquant webp
 
-    # Compress images in-place without changing extensions
+    # Compress all images in-place without changing any file extensions
     - name: Optimize Images In-Place
       run: |
-        # Compress JPEGs to 85% quality (visually lossless, drops file size up to 70%)
+        # 1. Compress JPEGs to 85% quality
         find images/ -type f \( -name "*.jpg" -o -name "*.jpeg" \) -exec jpegoptim --max=85 --strip-all {} \;
         
-        # Compress PNGs forcefully while overwriting the old, heavy file
+        # 2. Compress PNGs forcefully while overwriting the old file
         find images/ -type f -name "*.png" -exec pngquant --ext .png --force --speed 1 --skip-if-larger {} \;
 
-    # Scan the optimized files and build the JSON array
+        # 3. Compress WebP files safely in-place at 85% quality
+        find images/ -type f -name "*.webp" | while read -r file; do
+          webp -q 85 "$file" -o "${file}.tmp" && mv "${file}.tmp" "$file"
+        done
+
+    # Scan all optimized files (JPG, PNG, JPEG, WebP) and build the JSON array
     - name: Run Scan Script
       run: |
         echo "[" > wallpapers.json
@@ -42,10 +47,10 @@ jobs:
         fi
         echo "]" >> wallpapers.json
 
-    # Commit both the shrunk images and the updated JSON list
+    # Commit the optimized images and the updated JSON list
     - name: Commit and Push Changes
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@://github.com"
         git add images/ wallpapers.json
-        git diff-index --quiet HEAD || git commit -m "Optimize image sizes and update wallpaper list [skip ci]" && git push
+        git diff-index --quiet HEAD || git commit -m "Optimize image sizes (JPG/PNG/WebP) and update wallpaper list [skip ci]" && git push
