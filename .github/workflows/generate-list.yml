@@ -3,34 +3,49 @@ name: Generate Wallpaper List
 on:
   push:
     paths:
-      - 'images/**' # Only runs when you add/change things inside the images folder
+      - 'images/**' # Only runs when add/change happens inside the images folder
 
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Allows GitHub to save the generated file back to your repo
+      contents: write # Allows GitHub to save the generated file back to the repo
 
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v4
 
+    # Install compression tools that keep original extensions
+    - name: Install Optimization Tools
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y jpegoptim pngquant
+
+    # Compress images in-place without changing extensions
+    - name: Optimize Images In-Place
+      run: |
+        # Compress JPEGs to 85% quality (visually lossless, drops file size up to 70%)
+        find images/ -type f \( -name "*.jpg" -o -name "*.jpeg" \) -exec jpegoptim --max=85 --strip-all {} \;
+        
+        # Compress PNGs forcefully while overwriting the old, heavy file
+        find images/ -type f -name "*.png" -exec pngquant --ext .png --force --speed 1 --skip-if-larger {} \;
+
+    # Scan the optimized files and build the JSON array
     - name: Run Scan Script
       run: |
         echo "[" > wallpapers.json
-        # Finds all images in subfolders and cleans up paths
         find images/ -type f \( -name "*.jpg" -o -name "*.png" -o -name "*.jpeg" -o -name "*.webp" \) | sort | while read -r line; do
           echo "  \"$line\"," >> wallpapers.json
         done
-        # Fixes trailing comma formatting to make valid JSON
         if [ -s wallpapers.json ]; then
           sed -i '$ s/,$//' wallpapers.json
         fi
         echo "]" >> wallpapers.json
 
+    # Commit both the shrunk images and the updated JSON list
     - name: Commit and Push Changes
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@://github.com"
-        git add wallpapers.json
-        git diff-index --quiet HEAD || git commit -m "Automated wallpaper list update [skip ci]" && git push
+        git add images/ wallpapers.json
+        git diff-index --quiet HEAD || git commit -m "Optimize image sizes and update wallpaper list [skip ci]" && git push
