@@ -234,6 +234,29 @@ body:has(dialog[open]) {
     .wallpaper-dialog {
         max-width: 95vw;
     }
+    
+    /* FIX: Force container to hug the natural image bounds */
+    .dialog-container {
+        max-height: 90vh; /* Gives a little more vertical breathing room */
+        height: auto;
+    }
+
+    /* FIX: Remove fixed heights and flex stretching */
+    .dialog-image-wrapper {
+        min-height: unset;
+        height: auto;
+        display: block; /* Disables flex centering, letting the image dictate size */
+        background: transparent; /* Makes any accidental sub-pixel edge invisible */
+    }
+
+    /* FIX: Let the image scale fluidly with no containment bars */
+    .dialog-image-wrapper img {
+        width: 100%;
+        height: auto;
+        max-height: 60vh; /* Prevents extremely tall images from overflowing screens */
+        object-fit: contain;
+    }
+
     .dialog-footer {
         flex-direction: column;
         align-items: stretch;
