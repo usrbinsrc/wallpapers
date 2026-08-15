@@ -21,7 +21,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y jpegoptim pngquant webp
 
-    # Compress all images in-place without changing any file extensions
+        # Compress images in-place without changing any file extensions
     - name: Optimize Images In-Place
       run: |
         # 1. Compress JPEGs to 85% quality
@@ -30,10 +30,11 @@ jobs:
         # 2. Compress PNGs forcefully while overwriting the old file
         find images/ -type f -name "*.png" -exec pngquant --ext .png --force --speed 1 --skip-if-larger {} \;
 
-        # 3. Compress WebP files safely in-place at 85% quality
+        # 3. Compress WebP files safely in-place at 85% quality (Fixed command)
         find images/ -type f -name "*.webp" | while read -r file; do
-          webp -q 85 "$file" -o "${file}.tmp" && mv "${file}.tmp" "$file"
+          cwebp -q 85 "$file" -o "${file}.tmp" && mv "${file}.tmp" "$file"
         done
+
 
     # Scan all optimized files (JPG, PNG, JPEG, WebP) and build the JSON array
     - name: Run Scan Script
