@@ -19,7 +19,7 @@ Here is a quick look at some of the styles inside:
 
 | 🖥️ Desktop Layouts | 📱 Mobile Layouts |
 | :---: | :---: |
-| <img src="images/desktop/macos/macos.png" width="400" alt="Desktop Preview"> | <img src="images/mobile/iphone_purple.jpg" width="180" alt="Mobile Preview"> |
+| <img src="images/desktop/windows/win11_default.png" width="400" alt="Desktop Preview"> | <img src="images/mobile/iphone_purple.jpg" width="180" alt="Mobile Preview"> |
 | *Landscapes and Minimalist Designs* | *Vertical setups and Dark Art* |
 
 ---
