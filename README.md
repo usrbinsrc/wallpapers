@@ -43,7 +43,7 @@ To keep the gallery loading incredibly fast on all devices, this repository uses
     </td>
     <td valign="top" width="50%">
       <strong>📱 Mobile Previews</strong><br><br>
-      <img src="images/mobile/beach/beach_sky.jpg" width="31%" alt="Mobile Preview 1">
+      <img src="images/mobile/characters/flying_spiderman.webp" width="31%" alt="Mobile Preview 1">
       <img src="images/mobile/sky/moon_blue_sky.jpg" width="31%" alt="Mobile Preview 2">
       <img src="images/mobile/geometery/xiaomi_green.jpg" width="31%" alt="Mobile Preview 3">
     </td>
