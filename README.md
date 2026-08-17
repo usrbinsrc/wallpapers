@@ -1,30 +1,56 @@
-# My Personal Collection of Wallpapers
+# 🖼️ My Collection of Wallpapers
 
-This is a personal collection of my favorite wallpapers collected from around the internet. I built this so I can easily browse and download them onto any of my devices whenever I want a fresh look.
+Welcome to my personal corner of the internet! This is a curated collection of my favorite wallpapers gathered from all over the web. I built this repository so I can easily browse, sync, and download high-quality backgrounds onto any of my devices whenever I want a fresh aesthetic.
 
-**[Click here to view my live wallpaper gallery!](https://usrbinsrc.github.io/wallpapers/)**
-
----
-
-## No AI Policy
-This vault is strictly for real, human-made artwork and photography. 
-* **No AI-generated images** are included here. 
-* If any AI image manages to slip into this collection, it is an honest mistake because it either slipped past my radar or was just too good to be true.
+👉 **[Click here to view my live wallpaper gallery!](https://usrbinsrc.github.io/wallpapers/)**
 
 ---
 
-## Previews
+## 🚫 No AI
+This collection is strictly dedicated to **real, human-made artwork and photography**. 
+* **Zero AI-generated images** belong in this collection. 
+* If an AI image ever slips in, it was an honest mistake because it tricked my radar. Please let me know if you spot one!
 
-<img src="images/desktop/windows/win11_default.png" width="400" alt="Desktop Preview">
+---
+
+## 📂 Repository Structure
+
+The wallpapers are organized into two main folders depending on your device's screen aspect ratio:
+
+* 💻 **`images/desktop/`** — Wide, high-resolution wallpapers tailored for monitors, laptops, and tablets.
+* 📱 **`images/mobile/`** — Vertical, crisp wallpapers perfect for smartphone lockscreens and homescreens.
 
 ---
 
-## Structure
+## ✨ Automated Optimization
 
-Everything is split into two folders depending on the screen shape:
-
-* **images/desktop/** — Wide wallpapers for monitors and laptops.
-* **images/mobile/** — Vertical wallpapers for phone lockscreens and homescreens.
+To keep the gallery loading incredibly fast on all devices, this repository uses a custom **GitHub Action** pipeline. Every time an image is added or changed:
+* **JPEGs** are optimized down to 85% quality.
+* **PNGs** are compressed aggressively using `pngquant`.
+* **WebPs** are automatically compressed in-place.
+* A live **`wallpapers.json`** list is generated to power the web gallery instantly.
 
 ---
-*Curated purely for personal use.*
+
+## 👀 Previews
+
+<table>
+  <tr>
+    <td valign="top" width="50%">
+      <strong>💻 Desktop Previews</strong><br><br>
+      <img src="images/desktop/anime/scenery/grass_stone.jpg" width="100%" alt="Desktop Preview 1"><br><br>
+      <img src="images/desktop/anime/your_name.png" width="100%" alt="Desktop Preview 2">
+    </td>
+    <td valign="top" width="50%">
+      <strong>📱 Mobile Previews</strong><br><br>
+      <img src="images/mobile/beach/beach_sky.jpg" width="31%" alt="Mobile Preview 1">
+      <img src="images/mobile/sky/moon_blue_sky.jpg" width="31%" alt="Mobile Preview 2">
+      <img src="images/mobile/geometery/xiaomi_green.jpg" width="31%" alt="Mobile Preview 3">
+    </td>
+  </tr>
+</table>
+
+---
+
+
+*Curated purely for personal use and aesthetics.*
