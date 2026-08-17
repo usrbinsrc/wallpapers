@@ -38,7 +38,7 @@ To keep the gallery loading incredibly fast on all devices, this repository uses
   <tr>
     <td valign="top" width="50%">
       <strong>💻 Desktop Previews</strong><br><br>
-      <img src="images/desktop/anime/scenery/grass_stone.jpg" width="100%" alt="Desktop Preview 1"><br><br>
+      <img src="images/desktop/anime/scenery/frog_in_pond.png" width="100%" alt="Desktop Preview 1"><br><br>
       <img src="images/desktop/anime/your_name.png" width="100%" alt="Desktop Preview 2">
     </td>
     <td valign="top" width="50%">
